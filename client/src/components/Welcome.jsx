@@ -36,6 +36,7 @@ const Welcome = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(currentAccount);
     const { addressTo = "0xD903b0E66e6C87CC887c014e770Ac76C73925791", amount} = formData;
     console.log(formData);
 
