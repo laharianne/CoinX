@@ -7,10 +7,8 @@ import {Container, Row, Col} from 'reactstrap'
 import { TransactionContext } from "../context/TransactionContext";
 import { shortenAddress } from "../utils/shortenAddress";
 import { Loader } from ".";
-// import Navbar from "./Navbar";
 import {Navbar,Footer,Transactions} from "./"
 
-const companyCommonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
 const Input = ({ placeholder, name, type, value, handleChange }) => (
   <input
@@ -23,16 +21,8 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
   />
 );
 
-// Sets state for value to be transacted
-	// Clears extant alerts
-	function valueChange(value) {
-		setTransAmount(value);
-		setIsPending(false);
-		setIsError(false);
-	}
-
 const Welcome = () => {
-  const { currentAccount, connectWallet, handleChange, sendTransaction, formData, isLoading, transactionCount,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError} = useContext(TransactionContext);
+  const { currentAccount, connectWallet, handleChange, sendTransaction, SellCoin,formData, isLoading, transactionCount,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins,getAvailableCoinCount} = useContext(TransactionContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,16 +36,41 @@ const Welcome = () => {
       console.log("Failing inside if condition!");
       return;
     }
+    getAvailableCoinCount();
     console.log("Calling SendTransaction!")
     sendTransaction();
+    
   };
 
   // Handles user buy form submit
 	const handleBuySubmit = (e) => {
-		e.preventDefault();
-		valueChange(e.target.buypct.value);
-		buyPCT();
+    e.preventDefault();
+    console.log(currentAccount);
+    const { addressTo = "0xD903b0E66e6C87CC887c014e770Ac76C73925791", amount} = formData;
+    console.log(formData);
+    if (!amount){ 
+      console.log("Failing inside if condition!");
+      return;
+    }
+    getAvailableCoinCount();
+    console.log("Calling SendTransaction!")
+    sendTransaction();
 	};
+
+  const handleSellSubmit = (e) => {
+    e.preventDefault();
+    console.log(currentAccount);
+    const { addressTo = "0xD903b0E66e6C87CC887c014e770Ac76C73925791", amount} = formData;
+    console.log(formData);
+    if (!amount){ 
+      console.log("Failing inside if condition!");
+      return;
+    }
+    getAvailableCoinCount();
+    console.log("Calling SendTransaction!")
+    SellCoin();
+    
+  };
 
   return (
     <div className="min-h-screen">
@@ -68,7 +83,7 @@ const Welcome = () => {
             Send Walmart CoinX <br /> across the world
           </h1>
           <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
-            Claim Walmart NFT @ 0.02 ETH
+            Claim Walmart NFT @1 Wei
           </p>
           {!currentAccount && (
             <button
@@ -97,6 +112,9 @@ const Welcome = () => {
                 <p className="text-white font-light text-sm">
                   {shortenAddress(currentAccount)}
                 </p>
+                <p className="text-white font-light text-sm">
+                  {AvailableCoins}
+                </p>
                 <p className="text-white font-semibold text-lg mt-1">
                   Ethereum - Connected Acct
                 </p>
@@ -117,18 +135,14 @@ const Welcome = () => {
                 </p>
                 
                 <div className="h-[1px] w-full bg-gray-400 my-2" />
-
-                  {/* <Input placeholder="Associate ID/Customer ID" name="addressTo" type="text" handleChange={handleChange} /> */}
                   <Input placeholder="No of Coins" name="amount" type="text" handleChange={handleChange} />
-                  {/* <Input placeholder="Keyword (Gif)" name="keyword" type="text" handleChange={handleChange} />
-                  <Input placeholder="Enter Message" name="message" type="text" handleChange={handleChange} /> */}
 
                   {isLoading
                     ? <Loader />
                     : (
                       <button
                         type="button"
-                        onClick={handleSubmit}
+                        onClick={handleBuySubmit}
                         className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#3d4f7c] rounded-full cursor-pointer"
                       >
                         Buy Now
@@ -136,7 +150,7 @@ const Welcome = () => {
                     )}
                 </div>
               </Col>
-              {/* <Col className="p-3">
+              <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base  text-center">
                   Sell WalmartX coin back
@@ -150,7 +164,7 @@ const Welcome = () => {
                     : (
                       <button
                         type="button"
-                        onClick={handleSubmit}
+                        onClick={handleSellSubmit}
                         className="text-white w-full mt-2 border-[1px] p-2 border-[#3d4f7c] hover:bg-[#3d4f7c] rounded-full cursor-pointer"
                       >
                         Sell now
@@ -158,7 +172,7 @@ const Welcome = () => {
                     )}
                 </div>
               </Col>
-              <Col className="p-3">
+              {/* <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base text-center">
                   Transfer Walmart X Coin!
@@ -181,8 +195,8 @@ const Welcome = () => {
                       </button>
                     )}
                 </div>
-              </Col>
-              <Col className="p-3">
+              </Col> */}
+              {/* <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base text-center">
                   Check WalmartX Coin Balance

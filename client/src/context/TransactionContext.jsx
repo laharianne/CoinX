@@ -29,6 +29,7 @@ export const TransactionsProvider = ({ children }) => {
   const [errMsg, setErrMsg] = useState("Transaction failed!");
 	const [isError, setIsError] = useState(false);
   const [transAmount, setTransAmount] = useState('0');
+  const [AvailableCoins, setAvailableCoins] = useState('0');
 
   const handleChange = (e, name) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
@@ -100,10 +101,23 @@ export const TransactionsProvider = ({ children }) => {
       const accounts = await ethereum.request({ method: "eth_requestAccounts", });
 
       setCurrentAccount(accounts[0]);
+      getAvailableCoinCount();
       window.location.reload();
     } catch (error) {
       console.log(error);
       throw new Error("No ethereum object");
+    }
+  };
+
+  const getAvailableCoinCount = async() =>{
+    if(ethereum){
+      const transactionsContract = createEthereumContract();
+        const AvailableCoinCount = await transactionsContract.countOfMintableCoins();
+        setAvailableCoins(AvailableCoinCount.toString());
+        console.log(AvailableCoins.toString());
+    }
+    else{
+      console.log("No ethereum Object");
     }
   };
 
@@ -114,17 +128,17 @@ export const TransactionsProvider = ({ children }) => {
         const transactionsContract = createEthereumContract();
         console.log(transactionsContract);
         console.log(formData);
-        const parsedAmount = ethers.utils.parseEther((amount*0.00001).toString());
+        const parsedAmount = ethers.utils.parseEther((amount).toString());
         
-        await ethereum.request({
-          method: "eth_sendTransaction",
-          params: [{
-            from: currentAccount,
-            to: "0xD903b0E66e6C87CC887c014e770Ac76C73925791",
-            gas: "0x5208",
-            value: parsedAmount._hex,
-          }],
-        });
+        // await ethereum.request({
+        //   method: "eth_sendTransaction",
+        //   params: [{
+        //     from: currentAccount,
+        //     to: "0xD903b0E66e6C87CC887c014e770Ac76C73925791",
+        //     gas: "0x5208",
+        //     value: parsedAmount._hex,
+        //   }],
+        // });
 
         // const transactionHash = await transactionsContract.mint(addressTo, parsedAmount);
 
@@ -140,7 +154,7 @@ export const TransactionsProvider = ({ children }) => {
         // console.log(transactionCount)
 
         try{
-          const transactionHash = await transactionCount.mint({value:parsedAmount});
+          transactionsContract.mint({value:1});
 
           setIsLoading(true);
           await transactionContract.on((from, to, amount) => {
@@ -150,7 +164,7 @@ export const TransactionsProvider = ({ children }) => {
             setIsPending(true);
           })
           console.log(transactionHash);
-          // setIsLoading(false);
+          setIsLoading(false);
 
         }
         catch(err){
@@ -172,6 +186,48 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
+  const SellCoin = async () => {
+    try {
+      if (ethereum) {
+        const { addressTo, amount} = formData;
+        const transactionsContract = createEthereumContract();
+        console.log(transactionsContract);
+        console.log(formData);
+        const parsedAmount = ethers.utils.parseEther((amount).toString());
+
+        try{
+          transactionsContract.sellBack(1);
+
+          setIsLoading(true);
+          await transactionContract.on((from, to, amount) => {
+            setPendingFrom(from.toString());
+            setPendingTo(to.toString());
+            setPendingAmount(amount.toString());
+            setIsPending(true);
+          })
+          console.log(transactionHash);
+          setIsLoading(false);
+
+        }
+        catch(err){
+          console.log(err);
+          if(typeof err.data !== 'undefined') {
+            setErrMsg("Error: "+ err.data.message);
+          } 
+          setIsError(true);
+        }
+
+        // window.location.reload();
+      } else {
+        console.log("No ethereum object");
+      }
+    } catch (error) {
+      console.log(error);
+
+      throw new Error("No ethereum object");
+    }
+  };
+
   useEffect(() => {
     checkIfWalletIsConnect();
     // checkIfTransactionsExists();
@@ -182,12 +238,14 @@ export const TransactionsProvider = ({ children }) => {
       value={{
         transactionCount,
         connectWallet,
+        getAvailableCoinCount,
         transactions,
         currentAccount,
         isLoading,
         sendTransaction,
         handleChange,
-        formData,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,
+        SellCoin,
+        formData,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins
       }}
     >
       {children}
