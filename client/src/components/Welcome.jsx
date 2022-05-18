@@ -7,7 +7,8 @@ import {Container, Row, Col} from 'reactstrap'
 import { TransactionContext } from "../context/TransactionContext";
 import { shortenAddress } from "../utils/shortenAddress";
 import { Loader } from ".";
-import {Navbar,Footer,Transactions} from "./"
+import {Navbar,Footer,Login} from "./"
+import { useHistory } from "react-router-dom";
 
 
 const Input = ({ placeholder, name, type, value, handleChange }) => (
@@ -22,8 +23,13 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 );
 
 const Welcome = () => {
-  const { currentAccount, connectWallet, handleChange, sendTransaction, SellCoin,formData, isLoading, transactionCount,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins,getAvailableCoinCount} = useContext(TransactionContext);
+  const navigate = useHistory();
+  const { currentAccount, connectWallet, handleChange, sendTransaction, SellCoin,formData, isLoading, transactionCount,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins,getAvailableCoinCount,HoldingCoins,getHoldingCoins} = useContext(TransactionContext);
 
+  window.onload = function(){
+    getAvailableCoinCount();
+    getHoldingCoins();
+  }
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(currentAccount);
@@ -72,6 +78,8 @@ const Welcome = () => {
     
   };
 
+
+  if(localStorage.getItem("isLoggedIn")){
   return (
     <div className="min-h-screen">
     <div className="gradient-bg-welcome">
@@ -109,13 +117,16 @@ const Welcome = () => {
                 <BsInfoCircle fontSize={17} color="#fff" />
               </div>
               <div>
-                <p className="text-white font-light text-sm">
-                  {shortenAddress(currentAccount)}
+                <p className="text-white font-semibold text-sm">
+                  Address : {shortenAddress(currentAccount)}
                 </p>
-                <p className="text-white font-light text-sm">
-                  {AvailableCoins}
+                <p className="text-white font-semibold text-sm">
+                  Total Available Coins @Walmart : {AvailableCoins}
                 </p>
-                <p className="text-white font-semibold text-lg mt-1">
+                <p className="text-white font-semibold text-sm">
+                  Coins Balance of Current Account : {HoldingCoins}
+                </p>
+                <p className="text-white font-semibold text-sm">
                   Ethereum - Connected Acct
                 </p>
               </div>
@@ -222,6 +233,10 @@ const Welcome = () => {
     <Footer />
     </div>
   );
+            }
+            else{
+              navigate.push("/Login")
+            }
 };
 
 export default Welcome;

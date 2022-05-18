@@ -30,6 +30,7 @@ export const TransactionsProvider = ({ children }) => {
 	const [isError, setIsError] = useState(false);
   const [transAmount, setTransAmount] = useState('0');
   const [AvailableCoins, setAvailableCoins] = useState('0');
+  const [HoldingCoins, setHoldingCoins] = useState('0');
 
   const handleChange = (e, name) => {
     setformData((prevState) => ({ ...prevState, [name]: e.target.value }));
@@ -121,6 +122,20 @@ export const TransactionsProvider = ({ children }) => {
     }
   };
 
+  const getHoldingCoins = async() =>{
+    if(ethereum){
+      const transactionsContract = createEthereumContract();
+      console.log(currentAccount);
+      const HoldingCoinCount = await transactionsContract.balanceOf(currentAccount.toString());
+      setHoldingCoins(HoldingCoinCount.toString());
+      console.log(HoldingCoins.toString());
+    }
+    else{
+      setHoldingCoins("NA");
+      console.log("No ethereum Object");
+    }
+  };
+
   const sendTransaction = async () => {
     try {
       if (ethereum) {
@@ -157,7 +172,7 @@ export const TransactionsProvider = ({ children }) => {
           transactionsContract.mint({value:1});
 
           setIsLoading(true);
-          await transactionContract.on((from, to, amount) => {
+          await transactionsContract.on((from, to, amount) => {
             setPendingFrom(from.toString());
             setPendingTo(to.toString());
             setPendingAmount(amount.toString());
@@ -175,7 +190,7 @@ export const TransactionsProvider = ({ children }) => {
           setIsError(true);
         }
 
-        window.location.reload();
+        // window.location.reload();
       } else {
         console.log("No ethereum object");
       }
@@ -199,7 +214,7 @@ export const TransactionsProvider = ({ children }) => {
           transactionsContract.sellBack(1);
 
           setIsLoading(true);
-          await transactionContract.on((from, to, amount) => {
+          await transactionsContract.on((from, to, amount) => {
             setPendingFrom(from.toString());
             setPendingTo(to.toString());
             setPendingAmount(amount.toString());
@@ -239,13 +254,14 @@ export const TransactionsProvider = ({ children }) => {
         transactionCount,
         connectWallet,
         getAvailableCoinCount,
+        getHoldingCoins,
         transactions,
         currentAccount,
         isLoading,
         sendTransaction,
         handleChange,
         SellCoin,
-        formData,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins
+        formData,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins,HoldingCoins,
       }}
     >
       {children}
