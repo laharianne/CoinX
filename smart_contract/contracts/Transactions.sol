@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "./@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Transactions is ERC20 {
-    address public owner;
+   address public owner;
     uint256 maxMiningCount;
     uint maxOwnedByOneAddress;
     
@@ -14,6 +14,13 @@ contract Transactions is ERC20 {
         maxOwnedByOneAddress = 5;
     }
 
+    event TransactionComplete (
+        address indexed transactionBy,
+        uint currentBalance,
+        uint mintableLeft,
+        uint transactionDate
+    );
+
     function decimals() public view virtual override returns (uint8) {
         return 0;
     }
@@ -22,8 +29,16 @@ contract Transactions is ERC20 {
         uint256 minEth = 1;
         require(msg.value>=minEth,"Enough ETH not sent!");
         require(totalSupply()<=maxMiningCount,"No More WalmartX coins can be mined!");
-        require(balanceOf(msg.sender)<=maxMiningCount,"Your Wallet has mined the max number of coins allowed per wallet!");
-        _mint(msg.sender,1);
+
+        if(balanceOf(msg.sender)+msg.value>maxOwnedByOneAddress){
+            address payable recipient = payable(msg.sender);
+            recipient.transfer(msg.value);
+            require(false,"You cannot add these many coins to you wallet! Eth is returned to your account!");
+        }
+
+        _mint(msg.sender,msg.value);
+
+        emit TransactionComplete(msg.sender,balanceOf(msg.sender),countOfMintableCoins(),block.timestamp);
     }
 
     function sellBack(uint256 amountToSellBack) public {
@@ -31,6 +46,8 @@ contract Transactions is ERC20 {
         _burn(msg.sender,amountToSellBack);
         address payable recipient = payable(msg.sender);
         recipient.transfer(amountToSellBack);
+
+        emit TransactionComplete(msg.sender,balanceOf(msg.sender),countOfMintableCoins(),block.timestamp);
     }
 
     function returnBalance() public view returns(uint256){

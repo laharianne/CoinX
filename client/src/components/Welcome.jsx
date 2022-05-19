@@ -24,7 +24,7 @@ const Input = ({ placeholder, name, type, value, handleChange }) => (
 
 const Welcome = () => {
   const navigate = useHistory();
-  const { currentAccount, connectWallet, handleChange, sendTransaction, SellCoin,formData, isLoading, transactionCount,transAmount,pendingFrom, pendingTo,pendingAmount,isPending,errMsg,isError,AvailableCoins,getAvailableCoinCount,HoldingCoins,getHoldingCoins} = useContext(TransactionContext);
+  const { currentAccount, connectWallet, handleChange, sendTransaction, SellCoin,formData, isLoading,AvailableCoins,getAvailableCoinCount,HoldingCoins,getHoldingCoins,TransferCoin} = useContext(TransactionContext);
 
   window.onload = function(){
     getAvailableCoinCount();
@@ -33,18 +33,16 @@ const Welcome = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(currentAccount);
-    const { addressTo = "0xD903b0E66e6C87CC887c014e770Ac76C73925791", amount} = formData;
+    const { addressTo, amount} = formData;
     console.log(formData);
-
-    
 
     if (!amount){ 
       console.log("Failing inside if condition!");
       return;
     }
     getAvailableCoinCount();
-    console.log("Calling SendTransaction!")
-    sendTransaction();
+    console.log("Calling TransferFunction!")
+    TransferCoin();
     
   };
 
@@ -61,6 +59,7 @@ const Welcome = () => {
     getAvailableCoinCount();
     console.log("Calling SendTransaction!")
     sendTransaction();
+    getHoldingCoins();
 	};
 
   const handleSellSubmit = (e) => {
@@ -88,10 +87,13 @@ const Welcome = () => {
       <div className="flex mf:flex-row flex-col items-start justify-between md:p-20 py-12 px-4">
         <div className="flex flex-1 justify-start items-start flex-col mf:mr-10">
           <h1 className="text-3xl sm:text-5xl text-white text-gradient py-1">
-            Send Walmart CoinX <br /> across the world
+            Walmart CoinX <br />
+          </h1>
+          <h1 className="text-xl sm:text-1xl text-white  py-1">
+            Future of eXclusivity
           </h1>
           <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base">
-            Claim Walmart NFT @1 Wei
+            Mint your WMX Now
           </p>
           {!currentAccount && (
             <button
@@ -183,14 +185,14 @@ const Welcome = () => {
                     )}
                 </div>
               </Col>
-              {/* <Col className="p-3">
+              <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base text-center">
                   Transfer Walmart X Coin!
                 </p>
                 
                 <div className="h-[1px] w-full bg-gray-400 my-2" />
-                  <Input placeholder="Associate ID" name="addressTo" type="text" handleChange={handleChange} />
+                  <Input placeholder="To Address" name="addressTo" type="text" handleChange={handleChange} />
                   <Input placeholder="No of Coins" name="amount" type="number" handleChange={handleChange} />
 
 
@@ -206,7 +208,7 @@ const Welcome = () => {
                       </button>
                     )}
                 </div>
-              </Col> */}
+              </Col>
               {/* <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base text-center">
