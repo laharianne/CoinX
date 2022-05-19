@@ -144,7 +144,7 @@ const Welcome = () => {
               <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base  text-center">
-                  Buy Walmart Coin @1 Wei
+                  Buy Walmart CoinX @1 Wei
                 </p>
                 
                 <div className="h-[1px] w-full bg-gray-400 my-2" />
@@ -166,7 +166,7 @@ const Welcome = () => {
               <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base  text-center">
-                  Sell WalmartX coin back
+                  Sell Walmart CoinX back
                 </p>
                 
                 <div className="h-[1px] w-full bg-gray-400 my-2" />
@@ -188,7 +188,7 @@ const Welcome = () => {
               <Col className="p-3">
                 <div className="p-5 w-full flex flex-col justify-start items-center blue-glassmorphism">
                 <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12 text-base text-center">
-                  Transfer Walmart X Coin!
+                  Transfer Walmart CoinX!
                 </p>
                 
                 <div className="h-[1px] w-full bg-gray-400 my-2" />
